@@ -16,8 +16,34 @@ class Proxy
   def initialize(target_object)
     @object = target_object
     # ADD MORE CODE HERE
-  end
+    @messages = []
 
+  end
+  def method_missing(method_name, *args, &block)
+ #   @messages << "method name = #{method_name}, args = #{args.join(", ")}"
+
+    @messages << method_name
+
+    if @object.respond_to?(method_name)
+      if args.empty?
+        @object.send(method_name)
+      else
+        @object.send(method_name, args.first)
+      end
+    elsif method_name == :messages
+      @messages.pop
+      @messages
+    elsif method_name == :called?
+      @messages.pop
+      @messages.include?(args[0])
+    elsif method_name == :number_of_times_called
+      @messages.count(args[0])
+    else
+        raise NoMethodError
+    end
+
+
+  end
   # WRITE CODE HERE
 end
 
